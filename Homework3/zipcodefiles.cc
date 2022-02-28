@@ -1,9 +1,9 @@
 /**
  * @author Kofi Ampim Darkoh
  * @date 02/28/2022
- * @brief this assignment is about files
- * 
- * /
+ * @brief this assignment is about files and how we can use input and output streams to replace cin and cout
+ */
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -26,6 +26,7 @@ const string zero = "||:::";
 
 string getDigitCode(char digit);
 int getCheckDigitValue(int sum);
+bool isValid(string zipcode);
 
 /**
  * @brief This is the main function where we can print results to the screen
@@ -47,45 +48,86 @@ int main()
         char var4;
         char var5;
         char answer;
+        bool value;
+        int remainder;
+        int checker;
+
+        ifstream inStream;
+        string file_name = "input1.txt";
+        inStream.open(file_name);
+        if(inStream.fail())
+        {
+            outStream << "The file did not open" << " " << file_name << endl;
+            exit(0);
+        }
+        ofstream outStream;
+        string fileName = "output2.txt";
+        outStream.open(fileName);
+        if(outStream.fail())
+        {
+            outStream << "The file did not open" << fileName << endl;
+            exit(0);
+        }
     do
     {
         string zip;
-        cout << "Enter a zipcode: ";
-        cin >> zip;
+        inStream >> zip;
+        outStream << "Enter a zipcode: " << zip << endl;
+        
         if (zip.length() != 5)
         {
-            cout << "Error: Code is invalid" << endl;
+            outStream << "Error: Code is invalid" << endl;
         }
-        else
+        value = isValid(zip);
+        if(value == true)
         {
-            cout << "Code: | ";
+            outStream << "Code: | ";
             var1 = zip.at(0);
-            cout << getDigitCode(var1) << " ";
+            outStream << getDigitCode(var1) << " ";
             number1 = int(var1) - 48;
 
             var2 = zip.at(1);
-            cout << getDigitCode(var2) << " ";
+            outStream << getDigitCode(var2) << " ";
             number2 = int(var2) - 48;
 
             var3 = zip.at(2);
-            cout << getDigitCode(var3) << " ";
+            outStream << getDigitCode(var3) << " ";
             number3 = int(var3) - 48;
 
             var4 = zip.at(3);
-            cout << getDigitCode(var4) << " ";
+            outStream << getDigitCode(var4) << " ";
             number4 = int(var4) - 48;
 
             var5 = zip.at(4);
-            cout << getDigitCode(var5) << " ";
+            outStream << getDigitCode(var5) << " ";
             number5 = int(var5) - 48;
 
             total = number1 + number2 + number3 + number4 + number5;
             getCheckDigitValue(total);
-            cout << " |" << endl;
+            remainder =  total % 10;
+            if(remainder == 0)
+            {
+                char convert = remainder + '0';
+                outStream << getDigitCode(convert);
+            }
+            else
+            {
+                checker = 10 - remainder;
+                char convert1 =  checker + '0';
+                outStream << getDigitCode(convert1);
+            }
+            outStream << " |" << endl;
+            outStream << "More codes? (y/n)" ;
         }
-        cout << "More codes? (y/n)" << endl;
-        cin >> answer;
+        else
+        {
+            outStream << "Code is invalid"<< endl;
+            outStream << "More codes? (y/n)";
+        }
+        inStream >> answer;
     } while (answer == 'y');
+    inStream.close();
+    outStream.close();
     return 0;
 }
 
@@ -144,7 +186,7 @@ string getDigitCode(char digit)
  * @brief This function returns the check digit
  *
  * @param sum the function has a parameter called sum
- * @return
+ * @return int
  */
 int getCheckDigitValue(int sum)
 {
@@ -152,14 +194,16 @@ int getCheckDigitValue(int sum)
     int rem = sum % 10;
     if (rem == 0)
     {
-        char conv = '0' + rem;
-        cout << getDigitCode(conv);
+        char conv =  rem + '0';
+         getDigitCode(conv);
+        
     }
     else
     {
         check = 10 - rem;
-        char conv1 = '0' + check;
-        cout << getDigitCode(conv1);
+        char conv1 =  check + '0';
+         getDigitCode(conv1);
+        
     }
     return sum;
 }
@@ -169,5 +213,25 @@ int getCheckDigitValue(int sum)
  * 
  * @param zipcode
  * @return bool 
- * /
- 
+ */ 
+bool isValid(string zipcode)
+{
+    string a;
+    for(int i = 0; i < 5; i++)
+    {
+        if(isdigit(zipcode.at(i)))
+        {
+            a = a + "a";
+        }
+        else
+        {
+            a = a + "b";
+        }
+    }
+    if(a == "aaaaa")
+    {
+        return true;
+    }
+    else
+        return false;
+}
